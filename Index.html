@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JEDA — Satu Tanda Baca, Lain Makna</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f3ea;--ink:#1c2230;--mut:#6c707a;--card:#fffdf8;--line:#e3dac8;--red:#b3261e;--ok:#2e7d4f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13161e;--ink:#ece8dd;--mut:#9aa0ab;--card:#1e2330;--line:#2d3342;--red:#e0584f;--ok:#5cc58a}}
+:root[data-theme="dark"]{--bg:#13161e;--ink:#ece8dd;--mut:#9aa0ab;--card:#1e2330;--line:#2d3342;--red:#e0584f;--ok:#5cc58a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif}
+.wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:32px;letter-spacing:.16em;margin:0;line-height:1}
+h1 b{color:var(--red)}
+.sub{color:var(--mut);font-size:13px;margin:6px 0 16px}
+.dots{display:flex;gap:6px;margin-bottom:6px}
+.dots i{flex:1;height:5px;border-radius:5px;background:var(--line)}
+.dots i.d{background:var(--red)}.dots i.c{background:var(--ink)}
+.lv{font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.mk{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5}
+.mk small{display:block;color:var(--red);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+#sent{margin:22px 0 18px;font-family:'Fraunces',Georgia,serif;font-size:27px;line-height:1.55;display:flex;flex-wrap:wrap;align-items:baseline;min-height:120px;align-content:flex-start}
+#sent .w{white-space:pre}
+#sent .g{font:inherit;color:var(--red);background:none;border:0;border-radius:8px;padding:0 3px;min-width:22px;height:1.6em;cursor:pointer;margin:0 2px;font-weight:700}
+#sent .g:hover{background:var(--line)}
+#sent .g.e{color:var(--line);font-weight:400}
+#sent .g.e::after{content:'·'}
+#sent .g.on:not(.e){animation:pop .18s}
+@keyframes pop{from{scale:1.6}to{scale:1}}
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+.pal button{padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pal b{font-family:'Fraunces',Georgia,serif;font-size:22px;line-height:1}
+.pal small{font-size:9.5px;color:var(--mut)}
+.pal button.s{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pal button.s small{color:var(--bg);opacity:.75}
+.row{display:flex;gap:8px}
+button{font:inherit;font-weight:500;font-size:14px;padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.row button{flex:1}
+button.p{background:var(--red);border-color:var(--red);color:#fff8f0}
+#fb{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;display:none;border:1px solid var(--line);background:var(--card)}
+#fb.ok{display:block;border-color:var(--ok)}#fb.no{display:block;border-color:var(--red)}
+#fb.h{display:block}
+#fb b{display:block;margin-bottom:2px}
+#fb.ok b{color:var(--ok)}#fb.no b{color:var(--red)}
+#fb .fs{font-family:'Fraunces',Georgia,serif;font-size:19px;margin:4px 0}
+#fb .st{color:var(--red);letter-spacing:.1em}
+#fb .r{color:var(--mut);font-size:13px}
+#ov{position:fixed;inset:0;background:rgba(10,12,18,.55);display:none;place-items:center;padding:20px;z-index:10}
+#ov.on{display:grid}
+#ob{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:380px;padding:22px}
+#ob h3{font-family:'Fraunces',Georgia,serif;font-size:24px;margin:0 0 8px}
+#ob p{font-size:14px;line-height:1.55;margin:0 0 10px}
+#ob button{width:100%;margin-top:4px}
+</style></head><body>
+<div class="wrap">
+<h1>JED<b>A</b></h1>
+<div class="sub">Satu tanda baca, lain makna.</div>
+<div class="dots" id="dots"></div>
+<div class="lv" id="lv"></div>
+<div class="mk"><small>Maksudmu</small><span id="mk"></span></div>
+<div id="sent"></div>
+<div class="pal" id="pal"></div>
+<div class="row"><button id="hb">Petunjuk</button><button id="cb">Hapus</button><button id="ck" class="p">Cek</button></div>
+<div id="fb"></div>
+</div>
+<div id="ov"><div id="ob"></div></div>
+<script>
+const MK=[[',','Koma'],['.','Titik'],['?','Tanya'],['!','Seru'],[':','Dua titik'],[';','Titik koma']];
+const P=[
+{t:'Sapaan',m:'Kamu mengajak Nenek untuk makan bersama.',w:['ayo','makan','Nenek'],ok:[{1:',',2:'!'},{1:',',2:'.'}],bad:[[{2:'!'},'Tanpa koma, kalimatmu berarti mengajak orang memakan Nenek. Tentu bukan itu maksudmu.'],[{2:'.'},'Tanpa koma, Nenek terbaca sebagai hidangan, bukan orang yang diajak.']],r:'Koma memisahkan kata sapaan dari isi kalimat.'},
+{t:'Kalimat tanya',m:'Kamu penasaran dan ingin menanyakan apakah dia belum makan.',w:['dia','belum','makan'],ok:[{2:'?'}],bad:[[{2:'.'},'Itu pernyataan, padahal kamu ingin bertanya.'],[{2:'!'},'Tanda seru membuatnya terdengar kaget atau marah.']],r:'Kalimat tanya diakhiri tanda tanya.'},
+{t:'Seruan',m:'Kamu berteriak memperingatkan temanmu karena ada ular.',w:['awas','ada','ular'],ok:[{0:',',2:'!'}],bad:[[{2:'!'},'Tanda serunya sudah pas, tetapi kata seru "awas" masih perlu dipisah koma.'],[{2:'.'},'Bahayanya terdengar santai. Padahal ada ular!']],r:'Kata seru dipisah koma dari isi kalimat; peringatan mendesak memakai tanda seru.'},
+{t:'Keterangan tambahan',m:'Kamu memberi tahu bahwa Pak Budi, yang adalah guru kami, sedang sakit.',w:['Pak','Budi','guru','kami','sakit'],ok:[{1:',',3:',',4:'.'}],bad:[[{4:'.'},'Tanpa koma, "guru kami" menempel pada nama dan kalimat terasa membingungkan.']],r:'Keterangan tambahan (aposisi) diapit dua koma.'},
+{t:'Klausa setara',m:'Dua kegiatan terjadi bersamaan: Ayah membaca koran, sementara Ibu memasak di dapur.',w:['Ayah','membaca','koran','Ibu','memasak','di','dapur'],ok:[{2:',',6:'.'},{2:';',6:'.'}],bad:[[{6:'.'},'Tanpa jeda, "koran Ibu" terbaca seperti koran milik Ibu!']],r:'Dua klausa setara dipisah koma (atau titik koma).'},
+{t:'Nama tempat',m:'Kamu bercerita bahwa dia tinggal di kota Surabaya, di provinsi Jawa Timur.',w:['Dia','tinggal','di','Surabaya','Jawa','Timur'],ok:[{3:',',5:'.'}],bad:[[{5:'.'},'Tanpa koma, "Surabaya Jawa Timur" terbaca seperti satu nama tempat.']],r:'Nama tempat dan wilayah yang lebih luas dipisah koma.'},
+{t:'Ucapan terima kasih',m:'Kamu berterima kasih langsung kepada Bu Rani yang sudah membantumu.',w:['terima','kasih','Bu','Rani','sudah','membantu'],ok:[{1:',',3:',',5:'.'},{1:',',3:',',5:'!'}],bad:[[{5:'.'},'Tanpa koma, "Bu Rani" tidak terbaca sebagai orang yang kamu sapa.'],[{1:',',5:'.'},'Koma pertama sudah ada, tetapi sapaan di tengah kalimat perlu ditutup dengan koma juga.']],r:'Kata sapaan di tengah kalimat diapit koma.'},
+{t:'Perincian',m:'Ibu menyiapkan tiga bahan, yaitu telur, gula, dan tepung.',w:['Ibu','menyiapkan','tiga','bahan','telur','gula','dan','tepung'],ok:[{3:':',4:',',5:',',7:'.'}],bad:[[{4:',',5:',',7:'.'},'Kalimat "Ibu menyiapkan tiga bahan" sudah lengkap, jadi perincian diawali titik dua.'],[{3:':',7:'.'},'Titik dua sudah tepat, tetapi unsur perincian dipisah koma, termasuk sebelum "dan".']],r:'Titik dua mendahului perincian setelah kalimat lengkap; unsur perincian dipisah koma.'}
+];
+const $=s=>document.querySelector(s);
+let i=0,M,att,hint,done,br=',',st=[];
+let best=0;try{best=+localStorage.getItem('jeda-best')||0}catch(e){}
+const vk=(o,n)=>Array.from({length:n},(_,k)=>o[k]||'').join('|');
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function build(p,m){return p.w.map((w,k)=>((k==0||'.?!'.includes(m[k-1]||'x'))?cap(w):w)+m[k]).join(' ')}
+function load(){const p=P[i];M=Array(p.w.length).fill('');att=0;hint=false;done=false;
+  $('#lv').textContent=`Level ${i+1} dari ${P.length} · ${p.t}`;$('#mk').textContent=p.m;
+  $('#fb').className='';$('#fb').innerHTML='';$('#ck').textContent='Cek';dots();pal();sent()}
+function dots(){$('#dots').innerHTML=P.map((_,k)=>`<i class="${k<st.length?'d':k==i?'c':''}"></i>`).join('')}
+function pal(){$('#pal').innerHTML='';MK.forEach(([g,n])=>{const b=document.createElement('button');b.className=g==br?'s':'';b.innerHTML=`<b>${g}</b><small>${n}</small>`;b.onclick=()=>{br=g;pal()};$('#pal').appendChild(b)})}
+function sent(){const p=P[i],s=$('#sent');s.innerHTML='';
+  p.w.forEach((w,k)=>{const sp=document.createElement('span');sp.className='w';sp.textContent=((k==0||'.?!'.includes(M[k-1]||'x'))?cap(w):w);s.appendChild(sp);
+    const g=document.createElement('button');g.className='g '+(M[k]?'on':'e');g.textContent=M[k];g.setAttribute('aria-label','celah setelah '+w);
+    g.onclick=()=>{if(done)return;M[k]=M[k]==br?'':br;$('#fb').className='';sent()};s.appendChild(g)})}
+function check(){
+  if(done){next();return}
+  const p=P[i],n=p.w.length,k=M.join('|'),fb=$('#fb');
+  if(p.ok.some(o=>vk(o,n)==k)){
+    let s=att==0?3:att==1?2:1;if(hint)s=Math.min(s,2);st[i]=s;done=true;
+    fb.className='ok';fb.innerHTML=`<b>Tepat!</b><div class="fs">${build(p,M)}</div><div class="st">${'★'.repeat(s)+'☆'.repeat(3-s)}</div><div class="r">${p.r}</div>`;
+    $('#ck').textContent=i==P.length-1?'Selesai':'Lanjut';dots();
+  }else{
+    att++;let msg;const b=p.bad.find(x=>vk(x[0],n)==k);
+    if(!M[n-1])msg='Setiap kalimat perlu tanda akhir: titik, tanya, atau seru.';
+    else if(b)msg=b[1];
+    else msg='Belum tepat. Pikirkan lagi di mana kalimat perlu jeda agar sesuai maksudmu.';
+    fb.className='no';fb.innerHTML=`<b>Belum pas</b>${msg}<div class="r" style="margin-top:6px">Terbaca: ${build(p,M)}</div>`;
+  }}
+function next(){if(i<P.length-1){i++;load()}else end()}
+function end(){const t=st.reduce((a,b)=>a+b,0),mx=P.length*3;
+  if(t>best){best=t;try{localStorage.setItem('jeda-best',best)}catch(e){}}
+  const txt=`JEDA ${t}/${mx} ★\n`+st.map(s=>'★'.repeat(s)+'☆'.repeat(3-s)).join(' ');
+  ov(`<h3>Selesai</h3><p>Kamu meraih <b>${t} dari ${mx} bintang</b>. Terbaikmu: ${best}.</p><p>Satu koma bisa menyelamatkan Nenek. Bagikan hasilmu atau main lagi untuk bintang penuh.</p><button id="sh">Salin hasil</button><button class="p" style="margin-top:8px" onclick="cl();st=[];i=0;load()">Main lagi</button>`);
+  $('#sh').onclick=()=>{try{navigator.clipboard.writeText(txt);$('#sh').textContent='Tersalin'}catch(e){$('#sh').textContent=txt.replace('\n',' ')}}}
+function ov(h){$('#ob').innerHTML=h;$('#ov').classList.add('on')}
+function cl(){$('#ov').classList.remove('on')}
+$('#ck').onclick=check;
+$('#cb').onclick=()=>{if(done)return;M.fill('');$('#fb').className='';sent()};
+$('#hb').onclick=()=>{if(done)return;hint=true;const fb=$('#fb');fb.className='h';fb.innerHTML=`<b>Petunjuk</b><span class="r">${P[i].r}</span>`};
+load();
+ov(`<h3>Cara main</h3><p>Setiap level punya <b>maksud</b>. Kalimatnya belum diberi tanda baca.</p><p>Pilih tanda baca di bawah, lalu ketuk celah di antara kata untuk memasangnya. Ketuk lagi untuk melepas. Huruf awal kalimat berubah sendiri.</p><p>Letak satu koma saja bisa mengubah arti kalimat. Tepat sekali jalan, dapat 3 bintang.</p><button class="p" onclick="cl()">Mulai</button>`);
+</script></body></html>
